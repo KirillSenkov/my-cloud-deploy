@@ -1,4 +1,5 @@
 import './FilesEditModal.css';
+import { useTranslation } from 'react-i18next';
 
 type FilesEditModalProps = {
   isOpen: boolean;
@@ -26,6 +27,7 @@ export default function FilesEditModal({
   onCommentChange,
   onSubmit,
 }: FilesEditModalProps) {
+  const { t } = useTranslation();
   if (!isOpen) return null;
 
   return (
@@ -33,16 +35,16 @@ export default function FilesEditModal({
       <button
         className='filesEditModal__backdrop'
         type='button'
-        aria-label='Закрыть'
+        aria-label={t('filesEditModal.close')}
         onClick={onClose}
         disabled={isBusy}
       />
 
       <div className='filesEditModal__panel'>
-        <div className='filesEditModal__title'>Редактирование файла</div>
+        <div className='filesEditModal__title'>{t('filesEditModal.title')}</div>
 
         <label className='filesEditModal__field'>
-          <div className='filesEditModal__label'>Имя файла</div>
+          <div className='filesEditModal__label'>{t('filesEditModal.fileName')}</div>
           <input
             className='filesEditModal__input'
             type='text'
@@ -53,7 +55,7 @@ export default function FilesEditModal({
         </label>
 
         <label className='filesEditModal__field'>
-          <div className='filesEditModal__label'>Комментарий</div>
+          <div className='filesEditModal__label'>{t('filesEditModal.comment')}</div>
           <textarea
             className='filesEditModal__textarea'
             value={comment}
@@ -65,7 +67,7 @@ export default function FilesEditModal({
 
         {errors.length > 0 && (
           <div className='filesEditModal__error'>
-            <div className='filesEditModal__errorTitle'>Ошибки:</div>
+            <div className='filesEditModal__errorTitle'>{t('filesEditModal.errorsTitle')}</div>
             <ul className='filesEditModal__errorList'>
               {errors.map((msg, i) => (
                 <li key={`${i}-${msg}`}>{msg}</li>
@@ -81,7 +83,7 @@ export default function FilesEditModal({
             onClick={onClose}
             disabled={isBusy}
           >
-            Отмена
+            {t('filesEditModal.cancel')}
           </button>
 
           <button
@@ -90,7 +92,7 @@ export default function FilesEditModal({
             onClick={onSubmit}
             disabled={isBusy}
           >
-            {isBusy ? 'Применяем…' : 'Применить'}
+            {isBusy ? t('filesEditModal.loading') : t('filesEditModal.submit')}
           </button>
         </div>
       </div>

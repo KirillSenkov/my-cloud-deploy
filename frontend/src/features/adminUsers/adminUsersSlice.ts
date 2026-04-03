@@ -42,12 +42,12 @@ export const fetchUsers = createAsyncThunk<
     return await getUsers();
   } catch (err: unknown) {
     if (axios.isAxiosError(err)) {
-      console.log('объект:', err);
-      console.log('статус:', err.response?.status);
-      console.log('башка:', err.response?.headers);
+      console.log('error:', err);
+      console.log('status:', err.response?.status);
+      console.log('headers:', err.response?.headers);
       console.log('data:', err.response?.data);
-      console.log('урло:', err.config?.url);
-      console.log('метод:', err.config?.method);
+      console.log('url:', err.config?.url);
+      console.log('method:', err.config?.method);
       const status = err.response?.status ?? null;
       const detailRaw = (err.response?.data as { detail?: unknown } | undefined)?.detail;
       const detail = typeof detailRaw === 'string' ? detailRaw : 'Failed to load users';

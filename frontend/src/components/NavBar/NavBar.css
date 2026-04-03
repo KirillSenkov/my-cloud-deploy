@@ -10,29 +10,42 @@
   display: flex;
   align-items: center;
   justify-content: space-between;
-}
-
-.nav__brand {
-  font-weight: 700;
-  text-decoration: none;
-  color: #111827;
+  gap: 16px;
 }
 
 .nav__left {
   display: flex;
   align-items: center;
   gap: 12px;
+  min-width: 0;
+}
+
+.nav__brand {
+  font-weight: 700;
+  text-decoration: none;
+  color: #111827;
+  white-space: nowrap;
+}
+
+.nav__meta {
+  display: flex;
+  align-items: center;
+  gap: 20px;
+  min-width: 0;
+  margin-left: auto;
 }
 
 .nav__right {
   display: flex;
   align-items: center;
   gap: 12px;
+  min-width: 0;
 }
 
 .nav__link {
   text-decoration: none;
   color: #111827;
+  white-space: nowrap;
 }
 
 .nav__link:hover {
@@ -49,19 +62,20 @@
   background: #111827;
   color: #e5e7eb;
   text-decoration: none;
-  line-height: 0.8;
+  line-height: 1;
   font-size: 12px;
-  max-height: fit-content;
-  max-width: fit-content;
+  white-space: nowrap;
 }
 
 .nav__adminBtn:hover {
   background: #e5e7eb;
   color: #111827;
 }
+
 .nav__user {
   color: #374151;
   font-size: 14px;
+  white-space: nowrap;
 }
 
 .nav__button {
@@ -70,8 +84,57 @@
   background: #ffffff;
   border-radius: 6px;
   cursor: pointer;
+  white-space: nowrap;
 }
 
 .nav__button:hover {
   background: #f9fafb;
+}
+
+.nav__lang {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  white-space: nowrap;
+}
+
+.nav__langBtn {
+  border: 0;
+  background: transparent;
+  padding: 0;
+  margin: 0;
+  cursor: pointer;
+  font: inherit;
+  color: #9ca3af;
+}
+
+.nav__langBtn:hover {
+  color: #374151;
+}
+
+.nav__langBtn.is-active {
+  color: #2563eb;
+}
+
+.nav__langSep {
+  color: #d1d5db;
+}
+
+@media (max-width: 700px) {
+  .nav__inner {
+    flex-wrap: wrap;
+    align-items: flex-start;
+  }
+
+  .nav__meta {
+    width: 100%;
+    justify-content: flex-end;
+    flex-wrap: wrap;
+    gap: 12px;
+  }
+
+  .nav__right {
+    flex-wrap: wrap;
+    justify-content: flex-end;
+  }
 }

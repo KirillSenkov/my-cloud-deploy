@@ -1,0 +1,7 @@
+[project]
+name = "my-cloud-deploy"
+version = "0.1.0"
+description = "Deployment and integration repository for the My Cloud application"
+readme = "README.md"
+requires-python = ">=3.12"
+dependencies = []

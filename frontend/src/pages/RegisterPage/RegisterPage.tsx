@@ -1,5 +1,6 @@
 import { useMemo, useState , useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
+import { useTranslation } from 'react-i18next';
 import './RegisterPage.css';
 import { useAppDispatch, useAppSelector } from '../../app/hooks';
 import { register, resetAuthError } from '../../features/auth/authSlice';
@@ -12,7 +13,7 @@ function validate(values: {
   full_name: string,
   email: string,
   password: string,
-}): FieldErrors {
+}, t: (key: string) => string): FieldErrors {
   const errors: FieldErrors = {};
 
   const username = values.username.trim();
@@ -21,30 +22,30 @@ function validate(values: {
   const password = values.password;
 
   if (!username) {
-    errors.username = ['Username is required'];
+    errors.username = [t('register.errors.usernameRequired')];
   } else if (!/^[A-Za-z][A-Za-z0-9]{3,19}$/.test(username)) {
-    errors.username = ['Username must be 4-20 chars, latin letters/digits, first char is a letter'];
+    errors.username = [t('register.errors.usernameFormat')];
   }
 
   if (!fullName) {
-    errors.full_name = ['Full name is required'];
+    errors.full_name = [t('register.errors.fullNameRequired')];
   }
 
   if (!email) {
-    errors.email = ['Email is required'];
+    errors.email = [t('register.errors.emailRequired')];
   } else if (!/^[^@\s]+@[^@\s]+\.[^@\s]+$/.test(email)) {
-    errors.email = ['Invalid email format'];
+    errors.email = [t('register.errors.emailFormat')];
   }
 
   const pwErrors: string[] = [];
 
   if (!password) {
-    pwErrors.push('Password is required');
+    pwErrors.push(t('register.errors.passwordRequired'));
   } else {
-    if (password.length < 6) pwErrors.push('Password must be at least 6 characters');
-    if (!/[A-Z]/.test(password)) pwErrors.push('Password must contain at least one uppercase letter');
-    if (!/\d/.test(password)) pwErrors.push('Password must contain at least one digit');
-    if (!/[^A-Za-z0-9]/.test(password)) pwErrors.push('Password must contain at least one special character');
+    if (password.length < 6) pwErrors.push(t('register.errors.passwordLength'));
+    if (!/[A-Z]/.test(password)) pwErrors.push(t('register.errors.passwordUppercase'));
+    if (!/\d/.test(password)) pwErrors.push(t('register.errors.passwordDigit'));
+    if (!/[^A-Za-z0-9]/.test(password)) pwErrors.push(t('register.errors.passwordSpecial'));
   }
 
   if (pwErrors.length) {
@@ -57,6 +58,7 @@ function validate(values: {
 export default function RegisterPage() {
   const dispatch = useAppDispatch();
   const navigate = useNavigate();
+  const { t } = useTranslation();
 
   useEffect(() => {
     dispatch(resetAuthError());
@@ -76,8 +78,8 @@ export default function RegisterPage() {
       full_name: fullName,
       email,
       password,
-    });
-  }, [username, fullName, email, password]);
+    }, t);
+  }, [username, fullName, email, password, t]);
 
   const isLoading = status === 'loading';
   const hasLocalErrors = Object.keys(localErrors).length > 0;
@@ -118,11 +120,11 @@ export default function RegisterPage() {
 
   return (
     <div className='register'>
-      <h1 className='register__title'>Регистрация</h1>
+      <h1 className='register__title'>{t('register.title')}</h1>
 
       <form className='register__form' onSubmit={onSubmit}>
         <label className='register__label'>
-          Логин
+          {t('register.username')}
           <input
             className='register__input'
             value={username}
@@ -133,7 +135,7 @@ export default function RegisterPage() {
         {renderFieldErrors(localErrors, 'username')}
 
         <label className='register__label'>
-          Полное имя
+          {t('register.fullName')}
           <input
             className='register__input'
             value={fullName}
@@ -144,7 +146,7 @@ export default function RegisterPage() {
         {renderFieldErrors(localErrors, 'full_name')}
 
         <label className='register__label'>
-          Email
+          {t('register.email')}
           <input
             className='register__input'
             value={email}
@@ -155,7 +157,7 @@ export default function RegisterPage() {
         {renderFieldErrors(localErrors, 'email')}
 
         <label className='register__label'>
-          Пароль
+          {t('register.password')}
           <input
             className='register__input'
             type='password'
@@ -167,7 +169,7 @@ export default function RegisterPage() {
         {renderFieldErrors(localErrors, 'password')}
 
         <button className='register__button' type='submit' disabled={isLoading || hasLocalErrors}>
-          {isLoading ? 'Отправляем…' : 'Зарегистрироваться'}
+          {isLoading ? t('register.loading') : t('register.submit')}
         </button>
 
         {apiError && <div className='register__apiError'>{apiError}</div>}

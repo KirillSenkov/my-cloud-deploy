@@ -31,7 +31,11 @@ SECRET_KEY = os.environ.get('SECRET_KEY')
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = False
 
-ALLOWED_HOSTS = os.environ.get("DJANGO_ALLOWED_HOSTS", "*").split(",")
+hosts_raw = os.environ.get('DJANGO_ALLOWED_HOSTS', '')
+ALLOWED_HOSTS = [host.strip() for host in hosts_raw.split(',') if host.strip()]
+
+if not DEBUG and not ALLOWED_HOSTS:
+    raise RuntimeError('.env.DJANGO_ALLOWED_HOSTS must be set when DEBUG=False')
 
 # Application definition
 
@@ -131,10 +135,11 @@ DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
 
 AUTH_USER_MODEL = 'users.User'
 
+csrf_origins_raw = os.environ.get('DJANGO_CSRF_TRUSTED_ORIGINS', '')
 CSRF_TRUSTED_ORIGINS = [
-    "http://localhost",
-    "http://127.0.0.1",
-    "http://168.222.193.221",
-    "http://localhost:5173",
-    "http://127.0.0.1:5173",
+    'http://localhost',
+    'http://127.0.0.1',
+    'http://localhost:5173',
+    'http://127.0.0.1:5173',
+    *[origin.strip() for origin in csrf_origins_raw.split(',') if origin.strip()],
 ]

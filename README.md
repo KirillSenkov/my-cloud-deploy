@@ -1,37 +1,46 @@
-# My Cloud — дипломный проект Netology (Fullstack Python)
+# My Cloud
 
-## Веб-приложение "облачное хранилище":
-- регистрация и аутентификация пользователей (сессии + CSRF cookie)
-- интерфейс администратора (управление пользователями)
-- файловое хранилище: загрузка/отрытие/скачивание/переименование/комментарии/share (enable/disable) ссылкой
+English | [Русская версия](README.ru.md)
 
-## Стек
+## Cloud Storage Web Application
+
+- user registration and authentication based on Django sessions and CSRF cookies
+- administrative user management interface
+- personal file storage with upload, preview, download, rename, comments, and share-link enable/disable flows
+
+## Stack
+
 - Backend: Django + PostgreSQL
 - Frontend: React (Vite) + Redux + React Router
-- Deploy: Docker Compose + Nginx (единая точка входа)
+- Deploy: Docker Compose + Nginx as a single entrypoint
 
-## Архитектура деплоя (единый URL)
-Приложение доступно по одному URL (`http://<SERVER_IP>/`):
-- `Nginx` раздаёт собранный frontend
-- `Nginx` проксирует `/api/` на `Django backend`
-- `PostgreSQL` работает внутри docker-сети (не публикуется наружу)
-- файлы пользователей сохраняются в docker volume
+## Deployment Architecture
 
-## Требования
-- Ubuntu 24.04 LTS (на VPS reg.ru)
+The application is served under a single URL such as `http://<SERVER_IP>/`:
+
+- `Nginx` serves the built frontend
+- `Nginx` proxies `/api/` requests to the Django backend
+- `PostgreSQL` runs inside the Docker network and is not exposed publicly
+- user files are stored in a Docker volume
+
+## Requirements
+
+- Ubuntu 24.04 LTS or a similar Linux VPS
 - Docker Engine + Docker Compose plugin
-- Открыт порт 80 (HTTP)
+- Port `80` open for HTTP traffic
 - Git
 
-## Переменные окружения
-Файл: `backend/.env`
+## Environment Variables
 
-Пример (минимум):
-```
-env
-ADMIN_PASSWORD=Admin#1
-SECRET_KEY=replace-me
+File: `backend/.env`
+
+Minimum example:
+
+```env
+ADMIN_PASSWORD=change-me
+SECRET_KEY=replace-with-a-strong-secret-key
 DJANGO_ALLOWED_HOSTS=<SERVER_IP>,localhost,127.0.0.1
+DJANGO_CSRF_TRUSTED_ORIGINS=http://<SERVER_IP>,http://localhost,http://127.0.0.1,http://localhost:5173,http://127.0.0.1:5173
 
 POSTGRES_DB=my_cloud
 POSTGRES_USER=postgres
@@ -42,11 +51,14 @@ POSTGRES_PORT=5432
 STORAGE_ROOT=/data/storage
 ```
 
-## Быстрый запуск на сервере (VPS reg.ru)
-### 1. Подключиться по SSH
+## Quick Start On A Remote Server
+
+### 1. Connect over SSH
+
 `ssh deploy@<SERVER_IP>`
 
-### 2. Клонировать репозиторий
+### 2. Clone the repository
+
 `sudo mkdir -p /opt/my_cloud`
 
 `sudo chown -R deploy:deploy /opt/my_cloud`
@@ -57,60 +69,63 @@ STORAGE_ROOT=/data/storage
 
 `cd <REPO_DIR>`
 
-### 3. Заполнить переменные окружения
+### 3. Create the environment file
+
 `nano backend/.env`
 
-### 4. Запустить приложение
+### 4. Build and start the application
+
 `docker compose up --build -d`
 
-### 5. Проверка работоспособности
+### 5. Verify that it works
 
-Открыть в браузере: `http://<SERVER_IP>/`
+Open in a browser:
 
-#### Проверка API:
+`http://<SERVER_IP>/`
+
+#### API check
 
 `curl http://127.0.0.1/api/auth/csrf/`
 
-#### Тестовый администратор
+#### Initial administrator
 
-login: `admin`
+A bootstrap superuser with login `admin` is created from migration on first database initialization.
 
-password: `Admin#1`
+The initial password is taken from `ADMIN_PASSWORD` in `backend/.env`.
 
----
+Changing `ADMIN_PASSWORD` later does not automatically update the password of an already existing `admin` user.
 
-## Локальный запуск перед деплоем
+Use a strong unique password before the first deployment.
 
-Этот режим используется для проверки перед размещением на VPS.  
-Функционально совпадает с серверным деплоем, но доступ осуществляется через `localhost`.
+## Local Verification Before Deployment
 
----
+This mode is intended for validating the integrated stack before deploying to a VPS.
+Behavior is equivalent to the server deployment, but the application is accessed through `localhost`.
 
-#### Требования
+### Requirements (local)
 
-- Docker Desktop (WSL2)
+- Docker Desktop (WSL2) or Docker Engine
 - Docker Compose plugin
 - Git
 
----
+### Run
 
-### Запуск
+From the monorepo root:
 
-Из корня монорепозитория:
+#### 1. Prepare `backend/.env`
 
-#### 1. Подготовить env
-
-Создать файл:
+Create:
 
 `backend/.env`
 
-Пример:
+Example:
 
 ```env
-ADMIN_PASSWORD=Admin#1
-SECRET_KEY=replace-me
+ADMIN_PASSWORD=change-me
+SECRET_KEY=replace-with-a-strong-secret-key
 
 DJANGO_ALLOWED_HOSTS=localhost,127.0.0.1
+DJANGO_CSRF_TRUSTED_ORIGINS=http://localhost,http://127.0.0.1,http://localhost:5173,http://127.0.0.1:5173
 
 POSTGRES_DB=my_cloud
 POSTGRES_USER=postgres
@@ -121,48 +136,41 @@ POSTGRES_PORT=5432
 STORAGE_ROOT=/data/storage
 ```
 
----
-
-#### 2. Собрать и запустить контейнеры
+#### 2. Build and run the containers
 
 `docker compose up --build`
 
-Или в фоне:
+Or in detached mode:
 
 `docker compose up --build -d`
 
----
+#### 3. Check the application
 
-#### 3. Проверка
+Open:
 
-Открыть:
+`http://localhost/`
 
-- `http://localhost/`
-
-Проверка API:
+API check:
 
 `curl http://localhost/api/auth/csrf/`
 
----
-
-### 4. Остановка
+#### 4. Stop the stack
 
 `docker compose down`
 
-## API эндпоинты
+## API Endpoints
 
-Все API доступны по префиксу `/api/`.
+All endpoints are available under the `/api/` prefix.
 
----
+### Authentication
 
-### Аутентификация
+- **GET `/api/auth/csrf/`**
+  Issue a CSRF cookie.
 
-- **GET `/api/auth/csrf/`**  
-  Получить CSRF-cookie.
-
-- **POST `/api/auth/register/`**  
-  Регистрация пользователя.  
+- **POST `/api/auth/register/`**
+  Register a new user.
   JSON:
+
   ```json
   {
     "username": "user1",
@@ -172,79 +180,79 @@ STORAGE_ROOT=/data/storage
   }
   ```
 
-- **POST `/api/auth/login/`**  
-  Вход в систему.
+- **POST `/api/auth/login/`**
+  Sign in.
 
-- **GET `/api/auth/logout/`**  
-  Завершение сессии.
+- **GET `/api/auth/logout/`**
+  End the current session.
 
-- **GET `/api/auth/me/`**  
-  Информация о текущем пользователе.
+- **GET `/api/auth/me/`**
+  Return information about the current user.
 
----
+### User Administration
 
-### Администрирование пользователей
+- **GET `/api/admin/users/`**
+  List users visible to the current administrator together with storage metadata.
 
-- **GET `/api/admin/users/`**  
-  Список пользователей с метаданными хранилищ.
+- **DELETE `/api/admin/users/<user_id>/?delete_files=1`**
+  Delete a user.
+  `delete_files=1` also removes the user's files and storage directory.
 
-- **DELETE `/api/admin/users/<user_id>/?delete_files=1`**  
-  Удалить пользователя.  
-  Параметр `delete_files=1` — удалить файлы пользователя вместе с аккаунтом.
-
-- **PATCH `/api/admin/users/<user_id>/level/`**  
-  Изменить уровень пользователя.  
+- **PATCH `/api/admin/users/<user_id>/level/`**
+  Change user level.
   JSON:
+
   ```json
   {
     "level": "user | admin | senior_admin | superuser"
   }
   ```
 
----
+### File Operations
 
-### Работа с файлами
+- **POST `/api/files/upload/`**
+  Upload a file.
+  `multipart/form-data` fields:
+  - `file`
+  - `comment` optional
 
-- **POST `/api/files/upload/`**  
-  Загрузка файла.  
-  `multipart/form-data`:  
-  - `file` — файл  
-  - `comment` — опционально
+- **GET `/api/files/`**
+  List files of the current user.
 
-- **GET `/api/files/`**  
-  Список файлов текущего пользователя.
+- **GET `/api/files/?user_id=<int>`**
+  For administrators, list files of another user when permissions allow it.
 
-- **GET `/api/files/?user_id=<int>`**  
-  Для администратора — список файлов другого пользователя.
+- **DELETE `/api/files/<file_id>/`**
+  Delete a file.
 
-- **DELETE `/api/files/<file_id>/`**  
-  Удалить файл.
-
-- **PATCH `/api/files/<file_id>/rename/`**  
-  Переименовать файл.  
+- **PATCH `/api/files/<file_id>/rename/`**
+  Rename a file.
   JSON:
+
   ```json
   { "name": "new_name.txt" }
   ```
 
-- **PATCH `/api/files/<file_id>/comment/`**  
-  Изменить комментарий (пустая строка разрешена).  
+- **PATCH `/api/files/<file_id>/comment/`**
+  Update the file comment.
+  Empty string is allowed.
   JSON:
+
   ```json
   { "comment": "new comment" }
   ```
 
-- **GET `/api/files/<file_id>/download/`**  
-  Скачать файл.  
+- **GET `/api/files/<file_id>/download/`**
+  Download a file.
   Query:
-  - `mode=preview` — попытка открыть в браузере  
-  - иначе — скачивание
+  - `mode=preview` opens inline when supported by the browser
+  - otherwise the file is downloaded as an attachment
 
-- **POST `/api/files/<file_id>/share/`**  
-  Создать/включить публичную ссылку.
+- **POST `/api/files/<file_id>/share/`**
+  Create or enable a public share link.
 
-- **POST `/api/files/<file_id>/share/disable/`**  
-  Отключить публичную ссылку.
+- **POST `/api/files/<file_id>/share/disable/`**
+  Disable a public share link.
 
-- **GET `/api/share/<uuid>`**  
-  Скачать файл по публичной ссылке.
+- **GET `/api/share/<uuid>`**
+  Download a file through a public share link.

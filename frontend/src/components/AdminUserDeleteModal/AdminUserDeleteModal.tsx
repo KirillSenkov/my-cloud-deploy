@@ -1,4 +1,5 @@
 import { useEffect, useState } from 'react';
+import { useTranslation } from 'react-i18next';
 import './AdminUserDeleteModal.css';
 
 export type Props = {
@@ -19,6 +20,7 @@ export default function AdminUserDeleteModal({
   onClose,
   onConfirm,
 }: Props) {
+  const { t } = useTranslation();
   const [deleteFiles, setDeleteFiles] = useState(true);
 
   useEffect(() => {
@@ -32,16 +34,16 @@ export default function AdminUserDeleteModal({
       <button
         className='adminUserDeleteModal__backdrop'
         type='button'
-        aria-label='Закрыть'
+        aria-label={t('adminUserDeleteModal.close')}
         onClick={onClose}
         disabled={isBusy}
       />
 
       <div className='adminUserDeleteModal__panel'>
-        <div className='adminUserDeleteModal__title'>Удаление пользователя</div>
+        <div className='adminUserDeleteModal__title'>{t('adminUserDeleteModal.title')}</div>
 
         <div className='adminUserDeleteModal__text'>
-          Вы уверены, что хотите удалить пользователя
+          {t('adminUserDeleteModal.text')}
           <span className='adminUserDeleteModal__username'> {username}</span>?
         </div>
 
@@ -52,10 +54,10 @@ export default function AdminUserDeleteModal({
             onChange={(e) => setDeleteFiles(e.target.checked)}
             disabled={isBusy}
           />
-          <span>Удалить файлы пользователя</span>
+          <span>{t('adminUserDeleteModal.deleteFiles')}</span>
         </label>
 
-        <div className='adminUserDeleteModal__warning'>Действие необратимо.</div>
+        <div className='adminUserDeleteModal__warning'>{t('adminUserDeleteModal.warning')}</div>
 
         {error ? <div className='adminUserDeleteModal__error'>{error}</div> : null}
 
@@ -66,7 +68,7 @@ export default function AdminUserDeleteModal({
             onClick={onClose}
             disabled={isBusy}
           >
-            Отмена
+            {t('adminUserDeleteModal.cancel')}
           </button>
 
           <button
@@ -75,7 +77,7 @@ export default function AdminUserDeleteModal({
             onClick={() => onConfirm(deleteFiles)}
             disabled={isBusy}
           >
-            {isBusy ? 'Удаление…' : 'Удалить'}
+            {isBusy ? t('adminUserDeleteModal.loading') : t('adminUserDeleteModal.submit')}
           </button>
         </div>
       </div>

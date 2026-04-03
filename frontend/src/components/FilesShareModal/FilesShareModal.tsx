@@ -1,4 +1,5 @@
 import { useState } from 'react';
+import { useTranslation } from 'react-i18next';
 import './FilesShareModal.css';
 import type { FileDTO, Status } from '../../features/types';
 
@@ -22,6 +23,7 @@ export default function FilesShareModal({
   onDisable,
 }: FilesShareModalProps) {
   const [copied, setCopied] = useState(false);
+  const { t } = useTranslation();
 
   if (!file) return null;
 
@@ -46,51 +48,51 @@ export default function FilesShareModal({
       <button
         className='filesShareModal__backdrop'
         type='button'
-        aria-label='Закрыть'
+        aria-label={t('filesShareModal.close')}
         onClick={onClose}
         disabled={isBusy}
       />
 
       <div className='filesShareModal__panel'>
-        <div className='filesShareModal__title'>Публичная ссылка</div>
+        <div className='filesShareModal__title'>{t('filesShareModal.title')}</div>
 
         <div className='filesShareModal__hint'>
-          Файл: <span className='filesShareModal__file'>{file.original_name}</span>
+          {t('filesShareModal.file')} <span className='filesShareModal__file'>{file.original_name}</span>
         </div>
 
         <div className='filesShareModal__field'>
-          <div className='filesShareModal__label'>Ссылка</div>
+          <div className='filesShareModal__label'>{t('filesShareModal.link')}</div>
 
           <div className='filesShareModal__row'>
             <input
               className='filesShareModal__input'
               value={file.share_url ?? ''}
               readOnly
-              placeholder={isEnabled ? '' : 'Ссылка не создана'}
+              placeholder={isEnabled ? '' : t('filesShareModal.placeholder')}
             />
 
             <div className='filesShareModal__copyWrap'>
-							<button
-								className='filesShareModal__copyBtn'
-								type='button'
-								title={isEnabled ? 'Копировать (для https, иначе - выделение и Ctrl + C)' : 'Сначала создайте ссылку'}
-								onClick={copy}
-								disabled={!isEnabled || isBusy}
-							>
-								⧉
-							</button>
+              <button
+                className='filesShareModal__copyBtn'
+                type='button'
+                title={isEnabled ? t('filesShareModal.copy') : t('filesShareModal.copyDisabled')}
+                onClick={copy}
+                disabled={!isEnabled || isBusy}
+              >
+                ⧉
+              </button>
 
-							{copied && (
-								<div className='filesShareModal__toast' role='status' aria-live='polite'>
-									Скопировано
-								</div>
-							)}
-						</div>
+              {copied && (
+                <div className='filesShareModal__toast' role='status' aria-live='polite'>
+                  {t('filesShareModal.copied')}
+                </div>
+              )}
+            </div>
           </div>
 
           {isEnabled && file.share_created && (
             <div className='filesShareModal__meta'>
-              Создана: {new Date(file.share_created).toLocaleString()}
+              {t('filesShareModal.created', { date: new Date(file.share_created).toLocaleString() })}
             </div>
           )}
         </div>
@@ -108,7 +110,7 @@ export default function FilesShareModal({
                 onClick={onClose}
                 disabled={isBusy}
               >
-                Закрыть
+                {t('filesShareModal.close')}
               </button>
 
               <button
@@ -117,7 +119,7 @@ export default function FilesShareModal({
                 onClick={onDisable}
                 disabled={isBusy}
               >
-                {isBusy ? 'Отключаем...' : 'Отключить'}
+                {isBusy ? t('filesShareModal.disabling') : t('filesShareModal.disable')}
               </button>
             </>
           ) : (
@@ -128,7 +130,7 @@ export default function FilesShareModal({
                 onClick={onClose}
                 disabled={isBusy}
               >
-                Отмена
+                {t('filesShareModal.cancel')}
               </button>
 
               <button
@@ -137,7 +139,7 @@ export default function FilesShareModal({
                 onClick={onEnable}
                 disabled={isBusy}
               >
-                {isBusy ? 'Создаём...' : 'Создать'}
+                {isBusy ? t('filesShareModal.creating') : t('filesShareModal.create')}
               </button>
             </>
           )}

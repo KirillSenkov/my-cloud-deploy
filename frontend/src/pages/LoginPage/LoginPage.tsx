@@ -1,13 +1,19 @@
-import { useEffect, useState } from 'react';
-import './LoginPage.css';
-import { useAppDispatch, useAppSelector } from '../../app/hooks';
-import { login, resetAuthError } from '../../features/auth/authSlice';
-import { selectAuthError, selectAuthStatus, selectIsAuthenticated } from '../../features/auth/selectors';
-import { useNavigate, Link } from 'react-router-dom';
+import { useEffect, useState } from 'react'
+import { Link, useNavigate } from 'react-router-dom'
+import { useTranslation } from 'react-i18next'
+import './LoginPage.css'
+import { useAppDispatch, useAppSelector } from '../../app/hooks'
+import { login, resetAuthError } from '../../features/auth/authSlice'
+import {
+  selectAuthError,
+  selectAuthStatus,
+  selectIsAuthenticated,
+} from '../../features/auth/selectors'
 
 export default function LoginPage() {
   const dispatch = useAppDispatch();
   const navigate = useNavigate();
+  const { t } = useTranslation()
 
   useEffect(() => {
     dispatch(resetAuthError());
@@ -42,11 +48,11 @@ export default function LoginPage() {
 
   return (
     <div className='login'>
-      <h1 className='login__title'>Вход</h1>
+      <h1 className='login__title'>{t('login.title')}</h1>
 
       <form className='login__form' onSubmit={onSubmit}>
         <label className='login__label'>
-          Логин
+          {t('login.username')}
           <input
             className='login__input'
             value={username}
@@ -56,7 +62,7 @@ export default function LoginPage() {
         </label>
 
         <label className='login__label'>
-          Пароль
+          {t('login.password')}
           <input
             className='login__input'
             type='password'
@@ -67,22 +73,24 @@ export default function LoginPage() {
         </label>
 
         <button className='login__button' type='submit' disabled={isLoading}>
-          {isLoading ? 'Вход…' : 'Войти'}
+          {isLoading ? t('login.loading') : t('login.submit')}
         </button>
 
         <div className="login__info">
           <p className="login__infoText">
-            <strong>My Cloud</strong> — персональное облачное хранилище файлов.
+            <strong>My Cloud</strong> {t('login.infoLead')}
           </p>
           <ul className="login__infoList">
-            <li>— Загружай и скачивай файлы</li>
-            <li>— Управляй комментариями и именами файлов</li>
-            <li>— Делись публичными ссылками</li>
+            <li>— {t('login.item1')}</li>
+            <li>— {t('login.item2')}</li>
+            <li>— {t('login.item3')}</li>
           </ul>
-          <p className="login__infoHint">Нет аккаунта? Перейди на страницу<span> </span>
+          <p className="login__infoHint">
+            {t('login.noAccount')}{' '}
             <Link className='login__regLink' to='/register'>
-             регистрации
-            </Link><span> </span>и создай его за минуту.
+              {t('login.registerLink')}
+            </Link>{' '}
+            {t('login.noAccountTail')}
           </p>
         </div>
 

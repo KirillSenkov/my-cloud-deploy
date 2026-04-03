@@ -1,4 +1,5 @@
 import './FilesDeleteModal.css';
+import { useTranslation } from 'react-i18next';
 
 type FilesDeleteModalProps = {
   isOpen: boolean;
@@ -17,6 +18,7 @@ export default function FilesDeleteModal({
   onClose,
   onConfirm,
 }: FilesDeleteModalProps) {
+  const { t } = useTranslation();
   if (!isOpen) return null;
 
   return (
@@ -24,21 +26,21 @@ export default function FilesDeleteModal({
       <button
         className='filesDeleteModal__backdrop'
         type='button'
-        aria-label='Закрыть'
+        aria-label={t('filesDeleteModal.close')}
         onClick={onClose}
         disabled={isBusy}
       />
 
       <div className='filesDeleteModal__panel'>
-        <div className='filesDeleteModal__title'>Удаление файла</div>
+        <div className='filesDeleteModal__title'>{t('filesDeleteModal.title')}</div>
 
         <div className='filesDeleteModal__text'>
-          Вы уверены, что хотите удалить файл
+          {t('filesDeleteModal.text')}
           <span className='filesDeleteModal__fileName'> {fileName}</span>?
         </div>
 
         <div className='filesDeleteModal__warning'>
-          Действие необратимо.
+          {t('filesDeleteModal.warning')}
         </div>
 
         {error && (
@@ -52,7 +54,7 @@ export default function FilesDeleteModal({
             onClick={onClose}
             disabled={isBusy}
           >
-            Отмена
+            {t('filesDeleteModal.cancel')}
           </button>
 
           <button
@@ -61,7 +63,7 @@ export default function FilesDeleteModal({
             onClick={onConfirm}
             disabled={isBusy}
           >
-            {isBusy ? 'Удаление...' : 'Удалить'}
+            {isBusy ? t('filesDeleteModal.loading') : t('filesDeleteModal.submit')}
           </button>
         </div>
       </div>

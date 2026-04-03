@@ -5,6 +5,7 @@ import {
   useRef,
 } from 'react';
 import { useSearchParams } from 'react-router-dom';
+import { useTranslation } from 'react-i18next';
 import './FilesPage.css';
 
 import type { FileDTO, Status } from '../../features/types';
@@ -63,6 +64,7 @@ type TipState =
 
 export default function FilesPage() {
   const dispatch = useAppDispatch();
+  const { t } = useTranslation();
 
   const [searchParams] = useSearchParams();
 
@@ -113,10 +115,10 @@ export default function FilesPage() {
   };
 
   const tipFallback = useMemo(() => {
-    if (status === 'loading') return 'Список загружается...';
-    if (status === 'failed') return 'Ошибка загрузки списка';
-    return 'Чтобы увидеть подсказку, наведите курсор на элемент списка';
-  }, [status]);
+    if (status === 'loading') return t('files.tipLoading');
+    if (status === 'failed') return t('files.tipFailed');
+    return t('files.tipDefault');
+  }, [status, t]);
 
   const clearTip = () => {
     hoveredAnchorRef.current = null;
@@ -234,7 +236,7 @@ export default function FilesPage() {
         );
       })
       .catch(() => {
-        setDownloadError('Не удалось скачать файл. Попробуйте ещё раз позже.');
+        setDownloadError(t('files.errors.download'));
       })
       .finally(() => {
         setDownloadingId(null);
@@ -272,7 +274,7 @@ export default function FilesPage() {
         setDeleteError(null);
       })
       .catch((e: unknown) => {
-        const msg = errorToMessage(e, 'Не удалось удалить файл. Попробуйте ещё раз позже.');
+        const msg = errorToMessage(e, t('files.errors.delete'));
         setDeleteError(msg);
       })
       .finally(() => {
@@ -333,7 +335,7 @@ export default function FilesPage() {
             dispatch(updateFileMeta({ fileId: f.id, original_name: res.original_name }));
           })
           .catch((e: unknown) => {
-            errors.push(errorToMessage(e, 'Не удалось переименовать файл.'));
+            errors.push(errorToMessage(e, t('files.errors.rename')));
           })
       );
     }
@@ -345,7 +347,7 @@ export default function FilesPage() {
             dispatch(updateFileMeta({ fileId: f.id, comment: res.comment }));
           })
           .catch((e: unknown) => {
-            errors.push(errorToMessage(e, 'Не удалось обновить комментарий.'));
+            errors.push(errorToMessage(e, t('files.errors.comment')));
           })
       );
     }
@@ -403,7 +405,7 @@ export default function FilesPage() {
       setShareStatus('succeeded');
     } catch {
       setShareStatus('failed');
-      setShareError('Не удалось создать ссылку. Попробуйте ещё раз.');
+      setShareError(t('files.errors.shareCreate'));
     }
   };
 
@@ -426,7 +428,7 @@ export default function FilesPage() {
       setShareFileId(null);
     } catch {
       setShareStatus('failed');
-      setShareError('Не удалось отключить ссылку. Попробуйте ещё раз.');
+      setShareError(t('files.errors.shareDisable'));
     }
   };
   // END Share modal handle
@@ -445,7 +447,7 @@ export default function FilesPage() {
   return (
     <div className='files'>
       <div className='files__topBar'>
-        <h1 className='files__title'>Файлы</h1>
+        <h1 className='files__title'>{t('files.title')}</h1>
         {downloadError ? (
           <div className='files__downloadError' role='alert'>
             {downloadError}
@@ -455,7 +457,7 @@ export default function FilesPage() {
         <div className='files__topRight'>
           {isOwnList ? (
               <button className='files__uploadBtn' type='button' onClick={openUploadModal}>
-                Загрузить
+                {t('files.upload')}
               </button>
             ) : (owner && (
                 <UserBadge
@@ -531,13 +533,13 @@ export default function FilesPage() {
                   ref={commentRef}
                   onClick={forwardCommentClickToAnchor}
                 >
-                  <div className='filesTip__commentTitle'>Комментарий:</div>
+                  <div className='filesTip__commentTitle'>{t('files.commentTitle')}</div>
                   <div className='filesTip__commentText'>{tip.comment}</div>
                 </div>
               )}
 
               <div className='filesTip__label'>
-                {tip ? 'Наведите на элемент списка для получения подсказки' : tipFallback}
+                {tip ? t('files.tipHover') : tipFallback}
               </div>
             </div>
           </div>
@@ -547,14 +549,14 @@ export default function FilesPage() {
               <div className='files__scroll'>
                 <div className='files__header filesGrid'>
                   <div className='files__h files__hNum'>#</div>
-                  <div className='files__h'>Имя</div>
-                  <div className='files__h'>Размер</div>
-                  <div className='files__h'>Загрузка</div>
-                  <div className='files__h'>Скачивание</div>
-                  <div className='files__h files__hActions'>Действия</div>
+                  <div className='files__h'>{t('files.headerName')}</div>
+                  <div className='files__h'>{t('files.headerSize')}</div>
+                  <div className='files__h'>{t('files.headerUploaded')}</div>
+                  <div className='files__h'>{t('files.headerDownloaded')}</div>
+                  <div className='files__h files__hActions'>{t('files.headerActions')}</div>
                 </div>
 
-                {status === 'loading' && <div className='files__hint'>Загружаем список…</div>}
+                {status === 'loading' && <div className='files__hint'>{t('files.listLoading')}</div>}
 
                 {status === 'succeeded' && (
                   <ol className='files__list'>
@@ -572,7 +574,7 @@ export default function FilesPage() {
                             onClick={() => openOrDownload(f.id)}
                             data-file-name-anchor='1'
                             data-comment={f.comment ?? ''}
-                            title='Открыть/Скачать'
+                            title={t('files.actionOpen')}
                           >
                             <span className='files__nameText'>{f.original_name}</span>
                           </button>
@@ -586,7 +588,7 @@ export default function FilesPage() {
                             <button
                               className='files__iconBtn'
                               type='button'
-                              title='Редактировать'
+                              title={t('files.actionEdit')}
                               onClick={() => openEditModal(f)}
                             >
                               ✎
@@ -597,8 +599,8 @@ export default function FilesPage() {
                               type='button'
                               title={
                                 isShared
-                                  ? `Публичная ссылка (создана: ${formatDate(f.share_created)})`
-                                  : 'Создать публичную ссылку'
+                                  ? t('files.actionShareExisting', { date: formatDate(f.share_created) })
+                                  : t('files.actionShareCreate')
                               }
                               onClick={() => openShareModal(f.id)}
                             >
@@ -608,7 +610,7 @@ export default function FilesPage() {
                             <button
                               className='files__iconBtn files__iconBtn--download'
                               type='button'
-                              title={downloadingId === f.id ? 'Скачивание…' : 'Скачать'}
+                              title={downloadingId === f.id ? t('files.actionDownloading') : t('files.actionDownload')}
                               onClick={() => handleDownload(f.id, f.original_name)}
                               disabled={downloadingId === f.id}
                             >
@@ -618,7 +620,7 @@ export default function FilesPage() {
                             <button
                               className='files__iconBtn'
                               type='button'
-                              title='Удалить'
+                              title={t('files.actionDelete')}
                               onClick={() => openDeleteModal(f.id, f.original_name)}
                             >
                               ✕
@@ -631,7 +633,7 @@ export default function FilesPage() {
                   </ol>
                 )}
 
-                {status === 'succeeded' && items.length === 0 && <div className='files__hint'>Пока файлов нет.</div>}
+                {status === 'succeeded' && items.length === 0 && <div className='files__hint'>{t('files.empty')}</div>}
               </div>
             </div>
           </div>

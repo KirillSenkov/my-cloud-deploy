@@ -1,4 +1,5 @@
 import './FilesUploadModal.css';
+import { useTranslation } from 'react-i18next';
 import type { Status } from '../../features/types';
 
 type FilesUploadModalProps = {
@@ -24,6 +25,7 @@ export default function FilesUploadModal({
   onCommentChange,
   onSubmit,
 }: FilesUploadModalProps) {
+  const { t } = useTranslation();
   if (!isOpen) return null;
 
   const isBusy = status === 'loading';
@@ -33,15 +35,15 @@ export default function FilesUploadModal({
       <button
         className='filesUploadModal__backdrop'
         type='button'
-        aria-label='Закрыть'
+        aria-label={t('filesUploadModal.close')}
         onClick={onClose}
       />
 
       <div className='filesUploadModal__panel'>
-        <div className='filesUploadModal__title'>Загрузка файла</div>
+        <div className='filesUploadModal__title'>{t('filesUploadModal.title')}</div>
 
         <label className='filesUploadModal__field'>
-          <div className='filesUploadModal__label'>Файл</div>
+          <div className='filesUploadModal__label'>{t('filesUploadModal.file')}</div>
           <input
             className='filesUploadModal__input'
             type='file'
@@ -50,7 +52,7 @@ export default function FilesUploadModal({
         </label>
 
         <label className='filesUploadModal__field'>
-          <div className='filesUploadModal__label'>Комментарий</div>
+          <div className='filesUploadModal__label'>{t('filesUploadModal.comment')}</div>
           <textarea
             className='filesUploadModal__textarea'
             value={comment}
@@ -70,7 +72,7 @@ export default function FilesUploadModal({
             onClick={onClose}
             disabled={isBusy}
           >
-            Отмена
+            {t('filesUploadModal.cancel')}
           </button>
 
           <button
@@ -79,7 +81,7 @@ export default function FilesUploadModal({
             onClick={onSubmit}
             disabled={isBusy || !file}
           >
-            {isBusy ? 'Загрузка...' : 'Загрузить'}
+            {isBusy ? t('filesUploadModal.loading') : t('filesUploadModal.submit')}
           </button>
         </div>
       </div>

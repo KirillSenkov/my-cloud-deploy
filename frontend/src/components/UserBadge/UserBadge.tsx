@@ -1,4 +1,5 @@
 import './UserBadge.css';
+import { useTranslation } from 'react-i18next';
 
 export type UserInfo = {
   id: number;
@@ -13,6 +14,7 @@ type UserBadgeProps = {
 };
 
 export default function UserBadge({ user, onUsernameClick }: UserBadgeProps) {
+  const { t } = useTranslation();
   if (!user) return null;
   const { id, username, fullName, email } = user;
 
@@ -24,13 +26,13 @@ export default function UserBadge({ user, onUsernameClick }: UserBadgeProps) {
       <UsernameTag
         className={`userBadge__username ${isClickable ? 'userBadge__usernameBtn' : ''}`}
         type={isClickable ? 'button' : undefined}
-        title='Открыть карточку пользователя (файлы, роль, удаление)'
+        title={t('userBadge.openCard')}
         onClick={isClickable ? () => onUsernameClick?.(id) : undefined}
       >
         {username}
       </UsernameTag>
 
-      <div className='userBadge__details' aria-label='Детали пользователя'>
+      <div className='userBadge__details' aria-label={t('userBadge.details')}>
         <span className='userBadge__paren' aria-hidden='true'>(</span>
 
         <span className='userBadge__inner'>

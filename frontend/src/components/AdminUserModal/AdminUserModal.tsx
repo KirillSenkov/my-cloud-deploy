@@ -1,4 +1,5 @@
 import { useMemo, useState } from 'react';
+import { useTranslation } from 'react-i18next';
 import './AdminUserModal.css';
 import type { AdminUserDTO, UserLevel, UserRank } from '../../api/types';
 import { humanizeLevel, formatBytes , ALL_LEVELS, LEVEL_TO_RANK } from '../../utils/utils';
@@ -55,6 +56,7 @@ export default function AdminUserModal({
   onChangeLevel,
   onDeleteRequest,
 }: Props) {
+  const { t } = useTranslation();
   const [nextLevel, setNextLevel] = useState<UserLevel | ''>('');
 
   // useEffect(() => {
@@ -96,15 +98,15 @@ export default function AdminUserModal({
 
       <div className='adminUserModal__panel'>
         <div className='adminUserModal__titleRow'>
-          <div className='adminUserModal__title'>Пользователь</div>
+          <div className='adminUserModal__title'>{t('adminUserModal.title')}</div>
 
           <button
             className='adminUserModal__closeBtn'
             type='button'
             onClick={onClose}
             disabled={isBusy}
-            aria-label='Закрыть'
-            title='Закрыть'
+            aria-label={t('adminUserModal.close')}
+            title={t('adminUserModal.close')}
           >
             ✕
           </button>
@@ -114,7 +116,7 @@ export default function AdminUserModal({
 
         <div className='adminUserModal__section'>
           <div className='adminUserModal__line'>
-            <span className='adminUserModal__label'>ФИО</span>
+            <span className='adminUserModal__label'>{t('adminUserModal.fullName')}</span>
             <span className='adminUserModal__value'>{user.fullName}</span>
           </div>
 
@@ -127,14 +129,14 @@ export default function AdminUserModal({
 
           {'storageRelPath' in user && user.storageRelPath ? (
             <div className='adminUserModal__line'>
-              <span className='adminUserModal__label'>Хранилище</span>
+              <span className='adminUserModal__label'>{t('adminUserModal.storage')}</span>
               <span className='adminUserModal__value adminUserModal__mono'>{user.storageRelPath}</span>
             </div>
           ) : null}
 
           {'filesCount' in user ? (
             <div className='adminUserModal__line'>
-              <span className='adminUserModal__label'>Файлов</span>
+              <span className='adminUserModal__label'>{t('adminUserModal.files')}</span>
               <span className='adminUserModal__value'>
                 <strong>{user.filesCount}</strong>
               </span>
@@ -143,7 +145,7 @@ export default function AdminUserModal({
 
           {'totalStorageBytes' in user ? (
             <div className='adminUserModal__line'>
-              <span className='adminUserModal__label'>Объём</span>
+              <span className='adminUserModal__label'>{t('adminUserModal.storageSize')}</span>
               <span className='adminUserModal__value'>
                 <strong>{formatBytes(user.totalStorageBytes)}</strong>
               </span>
@@ -153,7 +155,7 @@ export default function AdminUserModal({
 
         <div className='adminUserModal__section'>
           <div className='adminUserModal__line'>
-            <span className='adminUserModal__label'>Текущий уровень</span>
+            <span className='adminUserModal__label'>{t('adminUserModal.currentLevel')}</span>
             <span className='adminUserModal__value'>
               <strong>{humanizeLevel(user.level)}</strong>
             </span>
@@ -168,7 +170,7 @@ export default function AdminUserModal({
                 disabled={isBusy}
               >
                 <option value="" disabled>
-                  -- Выберите уровень --
+                  {t('adminUserModal.selectLevel')}
                 </option>
                 
                 {levelOptions.map((lvl) => (
@@ -183,14 +185,14 @@ export default function AdminUserModal({
                 type='button'
                 onClick={() => onChangeLevel(user.id, nextLevel as UserLevel)}
                 disabled={!canApplyLevel || isBusy}
-                title={!canApplyLevel ? 'Выбери другой уровень' : 'Применить'}
+                title={!canApplyLevel ? t('adminUserModal.applyDisabled') : t('filesEditModal.submit')}
               >
-                {isChangingLevel ? 'Назначение…' : 'Назначить'}
+                {isChangingLevel ? t('adminUserModal.applying') : t('adminUserModal.apply')}
               </button>
             </div>
           ) : (
             <div className='adminUserModal__hint'>
-              Нет прав менять уровень этого пользователя.
+              {t('adminUserModal.noRights')}
             </div>
           )}
 
@@ -208,7 +210,7 @@ export default function AdminUserModal({
             onClick={() => onGoToFiles(user.id)}
             disabled={isBusy}
           >
-            Список файлов
+            {t('adminUserModal.fileList')}
           </button>
 
           <button
@@ -217,7 +219,7 @@ export default function AdminUserModal({
             onClick={() => onDeleteRequest(user.id)}
             disabled={isBusy}
           >
-            Удалить пользователя
+            {t('adminUserModal.deleteUser')}
           </button>
 
           {deleteError ? (
@@ -229,7 +231,7 @@ export default function AdminUserModal({
 
         <div className='adminUserModal__footer'>
           <button className='adminUserModal__btn' type='button' onClick={onClose} disabled={isBusy}>
-            Закрыть
+            {t('adminUserModal.close')}
           </button>
         </div>
       </div>

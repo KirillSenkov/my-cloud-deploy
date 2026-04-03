@@ -1,5 +1,6 @@
 import { useEffect, useMemo, useCallback } from 'react';
 import { Navigate, useNavigate } from 'react-router-dom';
+import { useTranslation } from 'react-i18next';
 import './AdminUsersPage.css';
 
 import { useAppDispatch, useAppSelector } from '../../app/hooks';
@@ -28,6 +29,7 @@ import AdminUserDeleteModal from '../../components/AdminUserDeleteModal/AdminUse
 export default function AdminUsersPage() {
   const dispatch = useAppDispatch();
   const navigate = useNavigate();
+  const { t } = useTranslation();
   
   const isAuthenticated = useAppSelector(selectIsAuthenticated);
   const actorUser = useAppSelector(selectAuthUser);
@@ -91,7 +93,7 @@ export default function AdminUsersPage() {
   return (
     <div className='adminUsers'>
       <div className='adminUsers__topBar'>
-        <h1 className='adminUsers__title'>Пользователи</h1>
+        <h1 className='adminUsers__title'>{t('adminUsers.title')}</h1>
       </div>
 
       {fetchStatus === 'failed' && fetchError && (
@@ -101,7 +103,7 @@ export default function AdminUsersPage() {
       )}
 
       {fetchStatus === 'loading' && (
-        <div className='adminUsers__hint'>Загружаем список пользователей…</div>
+        <div className='adminUsers__hint'>{t('adminUsers.loading')}</div>
       )}
 
       <AdminUserModal {...userModalProps} />
@@ -112,10 +114,10 @@ export default function AdminUsersPage() {
         <div className='adminUsers__box'>
           <div className='adminUsers__header adminUsersGrid'>
             <div className='adminUsers__h adminUsers__hNum'>#</div>
-            <div className='adminUsers__h'>Пользователь</div>
-            <div className='adminUsers__h adminUsers__metaHeader'>Уровень</div>
-            <div className='adminUsers__h adminUsers__metaHeader'>Файлы</div>
-            <div className='adminUsers__h adminUsers__metaHeader'>Объём</div>
+            <div className='adminUsers__h'>{t('adminUsers.headerUser')}</div>
+            <div className='adminUsers__h adminUsers__metaHeader'>{t('adminUsers.headerLevel')}</div>
+            <div className='adminUsers__h adminUsers__metaHeader'>{t('adminUsers.headerFiles')}</div>
+            <div className='adminUsers__h adminUsers__metaHeader'>{t('adminUsers.headerStorage')}</div>
           </div>
 
           <ol className='adminUsers__list'>{list}</ol>

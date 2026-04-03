@@ -1,81 +1,87 @@
-# My Cloud – Frontend (React + TypeScript + Vite)
+# My Cloud Frontend
 
-## Требования
+English | [Русская версия](README.ru.md)
 
-- `Node.js 18+`
-- `yarn или npm`
+Frontend application for the `My Cloud` platform.
 
-## Установка и запуск (dev)
-`cd FRONT`
-`yarn install`
-`yarn dev`
+## Role
 
-## Возможности
-- [x] Регистрация и аутентификация пользователей  
-- [x] Загрузка файлов 
-- [x] Просмотр списка файлов   
-- [x] Переименование и редактирование комментариев  
-- [x] Скачивание файлов  
-- [x] Публичная ссылка (включение/выключение, копирование) 
-- [x] Административный интерфейс управления пользователями  
-  - [x] Список пользователей (уровень, файлы, объём, путь хранилища)
-  - [x] Смена ролей пользователей (с учётом иерархии)
-  - [x] Удаление пользователя (опционально с удалением файлов)
-  - [x] Переход в хранилище выбранного пользователя (через `?userId=`)
-  
-## Маршруты (React Router)
-- `/` — список файлов (свои файлы)
-- `/?userId=<id>` — список файлов пользователя (для админа; права дополнительно проверяются бэком)
-- `/admin/users` — админка: список доступных пользователей
+The frontend provides:
 
-## Разработка (dev)
-Frontend — Vite (:5173)  
-Backend — Django (:8000)
+- login and registration flows
+- authenticated file management UI
+- public share-link interactions
+- administrative user management screens
+- single-page navigation over the backend API
 
-Для работы с CSRF в dev добавлен trusted origin:
-- http://localhost:5173
-- http://127.0.0.1:5173
+## Stack
 
-Используется Vite proxy:
-все запросы с префиксом `/api` перенаправляются на backend.
+- React
+- TypeScript
+- Vite
+- Redux Toolkit
+- React Router
+- Axios
 
-Аутентификация основана на Django sessions + CSRF cookie.
-Axios передаёт cookie с заголовком `X-CSRFToken`.
+## Main Areas
 
-## План разработки
-### Этап 1. Каркас и инфраструктура
-- [x] Vite + TypeScript
-- [x] Proxy Vite → Django для `/api`
-- [x] Axios client (cookies + CSRF)
-- [x] Redux Toolkit: auth state
-- [x] React Router: базовые маршруты
-- [x] ProtectedRoute
-- [x] NavBar (зависит от авторизации)
+- `src/api/`
+  HTTP client and API wrappers
+- `src/features/auth/`
+  authentication state and bootstrap flow
+- `src/features/files/`
+  file list, upload, delete, and metadata updates
+- `src/features/adminUsers/`
+  admin user list, deletion, and level-change flows
+- `src/pages/`
+  route-level UI for login, registration, files, and admin users
+- `src/components/`
+  reusable UI pieces and modal dialogs
 
-### Этап 2. Аутентификация и регистрация
-- [x] Login (POST /api/auth/login/)
-- [x] Logout (GET /api/auth/logout/)
-- [x] Register (POST /api/auth/register/)
-- [x] Валидация регистрации на фронте по ТЗ
+## Local Development
 
-### Этап 3. Файловое хранилище
-- [x] Список файлов (метаданные, без контента)
-- [x] Загрузка файла с комментарием
-- [x] Удаление файла
-- [x] Переименование файла
-- [x] Изменение комментария
-- [x] Скачивание файла
-- [x] Просмотр файла (если поддерживается браузером) или скачивание
-- [x] Публичная ссылка (включение/выключение, копирование)
-- [x] Скачивание по публичной ссылке (без авторизации)
-- [x] UI списка: действия, tooltips, sticky header, scroll
+### Requirements
 
-### Этап 4. Админка
-- [x] Список пользователей
-- [x] Смена ролей пользователей
-- [x] Удаление пользователя
-- [x] Переход в хранилище выбранного пользователя (admin)
+- Node.js 18+
+- Yarn or npm
 
-### Этап 5. UX и финализация
-- [x] Глобальная обработка ошибок API (единый формат отображения)
-- [ ] README: инструкции деплоя и сборки
+### Setup
+
+```bash
+cd frontend
+yarn install
+yarn dev
+```
+
+## Development Flow
+
+- Vite dev server runs on port `5173`
+- backend development server typically runs on port `8000`
+- Vite proxies `/api` requests to the backend
+- Axios sends cookies and adds `X-CSRFToken` automatically for mutating requests
+
+## Routes
+
+- `/`
+  current user's file list
+- `/?userId=<id>`
+  another user's file list when opened by an authorized admin
+- `/admin/users`
+  administrative users page
+- `/login`
+  sign-in page
+- `/register`
+  registration page
+
+## Functional Areas
+
+- authentication bootstrap through `/api/auth/me/`
+- file upload, download, rename, comment, delete, and share-link flows
+- admin user list with role hierarchy support
+- role changes and user deletion through modal-driven actions
+- protected routing for authenticated areas
+
+## Notes
+
+- The integrated deployment path is handled from the repository root through Docker Compose and Nginx
+- Root-level documentation is the primary source of truth for deployment instructions
